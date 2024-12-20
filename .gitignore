@@ -1,0 +1,20 @@
+# Ambiente virtual
+.venv/
+
+# Arquivo de ambiente
+.env
+
+# Diretórios e arquivos de cache do Python
+__pycache__/
+*.py[cod]
+
+# Logs e temporários
+*.log
+*.tmp
+
+# Configurações específicas do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos gerados pelo Docker
+*.pid
