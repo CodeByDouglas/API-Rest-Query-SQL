@@ -1,0 +1,10 @@
+# Flask: Framework web principal para construção da API.
+Flask==2.3.3
+# Flask-RESTful: Extensão para facilitar a criação de APIs RESTful.
+Flask-RESTful==0.3.10
+# python-dotenv: Carrega configurações do arquivo .env.
+python-dotenv==1.0.0
+# psycopg2-binary: Driver para conectar o Flask ao banco de dados PostgreSQL.
+psycopg2-binary==2.9.9
+# pytest: Framework para criação de testes automatizados.
+pytest==7.4.2
