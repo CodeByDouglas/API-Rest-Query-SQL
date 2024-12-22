@@ -25,6 +25,7 @@ def test_db():
         database_connection.close()
         
         return jsonify({
+            "status": "success",
             "Active_connections": active_connections,
             "Current Date": str(date), 
             "DB Version": db_version,
