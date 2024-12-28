@@ -8,3 +8,5 @@ python-dotenv==1.0.0
 psycopg2-binary==2.9.9
 # pytest: Framework para criação de testes automatizados.
 pytest==7.4.2
+#pytest-watch: Framework para excutar os testes de forma automatica.
+pytest-watch==4.2.0
