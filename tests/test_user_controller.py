@@ -32,9 +32,41 @@ def test_status_database(client):
     assert "Max Connections" in responseBody
     assert responseBody["Max Connections"] == 100
 
-def test_get_user_existente(client):
+#TESTES CONSULTA POR ID
+def test_get_user_existente_ID(client):
 
-    response= client.get('api/users/1')
+    response= client.get('api/users/id/1')
+    responseBody= response.get_json()
+    assert response.status_code == 200
+
+    assert responseBody["id"] == 1
+    assert responseBody["name"] == "User1"
+    assert responseBody["email"] == "user1@example.com"
+
+
+def test_get_user_naoencontrado_ID(client):
+
+    response= client.get('api/users/id/9999')
+    responseBody= response.get_json()
+    assert response.status_code == 404
+    assert "message" in responseBody
+    assert responseBody["message"] == "User not found"
+
+def test_get_user_errodeconexao_ID(client):
+
+    with patch("app.services.user_service.get_db_connection", side_effect=Exception("Database connection error")):
+
+        response= client.get('api/users/id/1')
+        responseBody= response.get_json()
+        assert response.status_code == 500
+    
+        assert "message" in responseBody
+        assert responseBody["message"] == "Internal server error"
+
+#TEST DE CONSULTA POR E-MAIL
+def test_get_user_existente_Email(client):
+
+    response= client.get('api/users/email/user1@example.com')
     responseBody= response.get_json()
     assert response.status_code == 200
 
@@ -45,7 +77,7 @@ def test_get_user_existente(client):
 
 def test_get_user_naoencontrado(client):
 
-    response= client.get('api/users/9999')
+    response= client.get('api/users/email/user9999@example.com')
     responseBody= response.get_json()
     assert response.status_code == 404
     assert "message" in responseBody
@@ -55,7 +87,7 @@ def test_get_user_errodeconexao(client):
 
     with patch("app.services.user_service.get_db_connection", side_effect=Exception("Database connection error")):
 
-        response= client.get('api/users/1')
+        response= client.get('api/users/email/user1@example.com')
         responseBody= response.get_json()
         assert response.status_code == 500
     
