@@ -75,7 +75,7 @@ def test_get_user_existente_Email(client):
     assert responseBody["email"] == "user1@example.com"
 
 
-def test_get_user_naoencontrado(client):
+def test_get_user_naoencontrado_Email(client):
 
     response= client.get('api/users/email/user9999@example.com')
     responseBody= response.get_json()
@@ -83,11 +83,42 @@ def test_get_user_naoencontrado(client):
     assert "message" in responseBody
     assert responseBody["message"] == "User not found"
 
-def test_get_user_errodeconexao(client):
+def test_get_user_errodeconexao_Email(client):
 
     with patch("app.services.user_service.get_db_connection", side_effect=Exception("Database connection error")):
 
         response= client.get('api/users/email/user1@example.com')
+        responseBody= response.get_json()
+        assert response.status_code == 500
+    
+        assert "message" in responseBody
+        assert responseBody["message"] == "Internal server error"
+
+#TEST DE CONSULTA POR USER NAME
+def test_get_user_existente_UserName(client):
+
+    response= client.get('api/users/username/User1')
+    responseBody= response.get_json()
+    assert response.status_code == 200
+
+    assert responseBody["id"] == 1
+    assert responseBody["name"] == "User1"
+    assert responseBody["email"] == "user1@example.com"
+
+
+def test_get_user_naoencontrado_UserName(client):
+
+    response= client.get('api/users/username/User9999')
+    responseBody= response.get_json()
+    assert response.status_code == 404
+    assert "message" in responseBody
+    assert responseBody["message"] == "User not found"
+
+def test_get_user_errodeconexao_UserName(client):
+
+    with patch("app.services.user_service.get_db_connection", side_effect=Exception("Database connection error")):
+
+        response= client.get('api/users/username/User1')
         responseBody= response.get_json()
         assert response.status_code == 500
     
