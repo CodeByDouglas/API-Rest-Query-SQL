@@ -34,7 +34,7 @@ def test_status_database(client):
 
 def test_get_user_existente(client):
 
-    response= client.get('api/user/1')
+    response= client.get('api/users/1')
     responseBody= response.get_json()
     assert response.status_code == 200
 
@@ -45,7 +45,7 @@ def test_get_user_existente(client):
 
 def test_get_user_naoencontrado(client):
 
-    response= client.get('api/user/9999')
+    response= client.get('api/users/9999')
     responseBody= response.get_json()
     assert response.status_code == 404
     assert "message" in responseBody
@@ -53,8 +53,9 @@ def test_get_user_naoencontrado(client):
 
 def test_get_user_errodeconexao(client):
 
-    with patch("app.config.get_db_connection", side_effect=Exception("Database connection error")):
-        response= client.get('api/user/1')
+    with patch("app.services.user_service.get_db_connection", side_effect=Exception("Database connection error")):
+
+        response= client.get('api/users/1')
         responseBody= response.get_json()
         assert response.status_code == 500
     

@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 from app.config import get_db_connection
+from app.services.user_service import buscar_user_por_id
 
 user_bp = Blueprint('user', __name__)
 
@@ -33,3 +34,23 @@ def test_db():
     
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    
+
+@user_bp.route('users/<int:user_id>', methods=['GET'])
+def get_user_id(user_id):
+    try: 
+
+        user= buscar_user_por_id(user_id)
+
+        if user: 
+            return jsonify({
+                "id": user[0],
+                "name": user[1],
+                "email": user[2]
+                }), 200
+        else: 
+            return jsonify({"message": "User not found"}), 404
+    
+    except Exception as e: 
+        return jsonify({"message": "Internal server error", "error": str(e)}), 500
+
