@@ -10,3 +10,5 @@ psycopg2-binary==2.9.9
 pytest==7.4.2
 #pytest-watch: Framework para excutar os testes de forma automatica.
 pytest-watch==4.2.0
+#yoyo-migrations: Framework para criar e gerenciar as Migrations do Banco de dados.
+yoyo-migrations==9.0.0
