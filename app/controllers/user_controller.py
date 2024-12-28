@@ -92,3 +92,6 @@ def get_user_username(user_username):
     except Exception as e: 
         return jsonify({"message": "Internal server error", "error": str(e)}), 500
 
+@user_bp.route('api/users/add', methods=['POST'])
+def add_user():
+    return jsonify({"menssage": "Endpoint not implemented"}), 501

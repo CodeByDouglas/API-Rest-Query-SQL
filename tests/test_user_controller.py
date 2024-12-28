@@ -124,4 +124,46 @@ def test_get_user_errodeconexao_UserName(client):
     
         assert "message" in responseBody
         assert responseBody["message"] == "Internal server error"
+
+def test_add_user(client):
+
+    response =  client.post('api/users/add', json={
+        "name": "New User",
+        "email": "newuser@example.com"
+        })
+    responseBody = response.get_json()
     
+    assert response.status_code == 201
+    assert responseBody["id"] is not None
+    assert responseBody["name"] == "New User"
+    assert responseBody["email"] == "newuser@example.com"
+    assert responseBody["message"] == "User successfully created"
+
+def test_add_user_existente():
+    
+    response = client.post('api/users/add', json={
+        "name": "New User", 
+        "email": "user1@example.com"
+    })
+
+    responseBody = response.get_json()
+    
+    assert response.status_code == 409
+    assert responseBody["message"] == "User already exists"
+
+
+def test_add_user_db_error(client):
+    
+    
+    with patch("app.services.user_service.add_user_to_database", side_effect=Exception("Database connection error")):
+        response = client.post('api/users/add', json={
+            "name": "New User",
+            "email": "newuser@example.com"
+        })
+        responseBody = response.get_json()
+
+        assert response.status_code == 500
+        assert "message" in responseBody
+        assert responseBody["message"] == "Internal server error"
+
+
