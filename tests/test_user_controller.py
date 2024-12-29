@@ -1,6 +1,7 @@
 import pytest
 from app import create_app
 from unittest.mock import patch
+from tests.utils import limpar_email_de_teste
 
 @pytest.fixture
 def client():
@@ -125,6 +126,12 @@ def test_get_user_errodeconexao_UserName(client):
         assert "message" in responseBody
         assert responseBody["message"] == "Internal server error"
 
+#Apaga os E-mails utilizados pelo tests
+@pytest.fixture(autouse=True)
+def limpar_dados_de_teste():
+    limpar_email_de_teste("newuser@example.com")
+    
+
 def test_add_user(client):
 
     response =  client.post('api/users/add', json={
@@ -139,7 +146,7 @@ def test_add_user(client):
     assert responseBody["email"] == "newuser@example.com"
     assert responseBody["message"] == "User successfully created"
 
-def test_add_user_existente():
+def test_add_user_existente(client):
     
     response = client.post('api/users/add', json={
         "name": "New User", 
@@ -153,17 +160,12 @@ def test_add_user_existente():
 
 
 def test_add_user_db_error(client):
-    
-    
-    with patch("app.services.user_service.add_user_to_database", side_effect=Exception("Database connection error")):
-        response = client.post('api/users/add', json={
+    with patch("app.controllers.user_controller.adicionar_user_ao_db", side_effect=Exception("Database connection error")):
+        response = client.post('/api/users/add', json={
             "name": "New User",
             "email": "newuser@example.com"
         })
         responseBody = response.get_json()
 
         assert response.status_code == 500
-        assert "message" in responseBody
         assert responseBody["message"] == "Internal server error"
-
-
