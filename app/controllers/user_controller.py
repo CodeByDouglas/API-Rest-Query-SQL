@@ -1,6 +1,6 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from app.config import get_db_connection
-from app.services.user_service import buscar_user_por_id, buscar_user_por_email, buscar_user_por_userName
+from app.services.user_service import *
 
 user_bp = Blueprint('user', __name__)
 
@@ -92,6 +92,26 @@ def get_user_username(user_username):
     except Exception as e: 
         return jsonify({"message": "Internal server error", "error": str(e)}), 500
 
-@user_bp.route('api/users/add', methods=['POST'])
+@user_bp.route('/users/add', methods=['POST'])
 def add_user():
-    return jsonify({"menssage": "Endpoint not implemented"}), 501
+    try: 
+        dados = request.get_json()
+        name = dados.get("name")
+        email = dados.get("email")
+
+        is_valid, error_message = validar_dados_user(name, email)
+        if not is_valid:
+            return jsonify({"message": error_message}), 400
+        
+        if verificar_user_exite(email): 
+            return  jsonify({"message": "User already exists"}), 409
+        
+        user_id = adicionar_user_ao_db(name, email)
+
+        return jsonify({
+            "id": user_id,
+            "name": name,
+            "email": email,
+            "message": "User successfully created"}), 201
+    except Exception as e:
+        return jsonify({"message": "Internal server error", "error": str(e)}), 500
